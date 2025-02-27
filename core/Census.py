@@ -2,7 +2,7 @@ import telebot
 import os
 from telebot import types
 from pymongo import MongoClient
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 API_TOKEN = os.environ.get('API_TOKEN')
 bot = telebot.TeleBot(API_TOKEN)
