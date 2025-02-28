@@ -37,6 +37,7 @@ def start_bot(message):
 # دستور /new_option: شروع رأی‌گیری
 @bot.message_handler(commands=['new_option'])
 def new_bot(message):
+#حذف داده های قبلی پایگاه داده
     collection.delete_many({})
     collection_user.delete_many({})
 
@@ -56,8 +57,10 @@ def new_bot(message):
     bot.send_message(GROUP_CHAT_ID, text, reply_markup=markup, parse_mode='HTML')
 
 
+# دستور /end_option: پایان رأی‌گیری و نمایش نتایج
 @bot.message_handler(commands=['end_option'])
 def end_bot(message):
+# خواندن داده‌ها از پایگاه داده
     data = []
     for option in list_bottun:
         item = collection.find_one({'item': option})
@@ -66,41 +69,52 @@ def end_bot(message):
         else:
             data.append(0)
 
+# رسم نمودار نتایج
     plt.bar(list_bottun, data)
     plt.savefig('results.png')
-    
     plt.close()
 
+#ارسال نمودار به گروه
     with open('results.png', 'rb') as photo:
         bot.send_photo(GROUP_CHAT_ID, photo)
 
+#حذف داده های قبلی پایگاه داده
     collection.delete_many({})
     collection_user.delete_many({})
 
+#اعلام پایان رأی‌گیری به گروه
     bot.send_message(GROUP_CHAT_ID, 'Voting has ended.')
     for i, option in enumerate(list_bottun):
         bot.send_message(GROUP_CHAT_ID, f"{option}: {data[i]}")
+#ترک گروه توسط بات
     bot.leave_chat(GROUP_CHAT_ID)
 
 
+#مدیریت رأی‌ دهی توسط کاربران
 @bot.message_handler(func=lambda message: True)
 def user_vote(message):
     user_select = message.text
 
+# چک کردن اینکه گزینه انتخابی در لیست گزینه‌ها وجود دارد
     if user_select in list_bottun:
         user = collection_user.find_one({'user_id': message.from_user.id})
         if user is None:
+#ثبت اطلاعات کاربر در پایگاه داده
             collection_user.insert_one({
                 'user_id': message.from_user.id,
                 'username': message.from_user.username,
                 'first_name': message.from_user.first_name,
                 'last_name': message.from_user.last_name
             })
+#افزایش تعداد رأی برای گزینه انتخابی
             collection.update_one({'item': user_select}, {'$inc': {'count_of_votes': 1}})
+# اعلام ثبت رأی به کاربر
             bot.send_message(message.chat.id, f'Your vote for "{user_select}" has been counted.')
         else:
+#اعلام اینکه کاربر قبلاً رأی داده است
             bot.send_message(message.chat.id, 'You have already voted.')
     else:
+#اعلام اینکه گزینه انتخابی معتبر نیست
         bot.send_message(message.chat.id, 'Invalid option. Please select one of the available options.')
 
 
