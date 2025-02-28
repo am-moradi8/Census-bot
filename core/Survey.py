@@ -16,8 +16,10 @@ db = client['btn']
 collection = db['servery']
 collection_user = db['user']
 
+
+#یوزر آیدی ادمین و آیدی گروه
 GROUP_CHAT_ID = -1002389019806
-ADMIN_ID = 123456789  # ID ادمین را به درستی وارد کنید
+ADMIN_ID = 123456789  
 
 list_bottun = ['django', 'python', 'ccna', 'net+']
 
