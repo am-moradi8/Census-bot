@@ -18,7 +18,7 @@ collection_user = db['user']
 
 
 #یوزر آیدی ادمین و آیدی گروه
-GROUP_CHAT_ID = -1002389019806
+GROUP_CHAT_ID = int(os.environ.get('GROUP_CHAT_ID'))
 ADMIN_ID = 123456789  
 
 list_bottun = ['django', 'python', 'ccna', 'net+']
