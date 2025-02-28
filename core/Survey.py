@@ -8,27 +8,33 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')
 
-API_TOKEN = os.environ.get('API_TOKEN')
-bot = telebot.TeleBot(API_TOKEN)
 
+# MongoDBاتصال به پایگاه داده 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['btn']
 collection = db['servery']
 collection_user = db['user']
 
 
-#یوزر آیدی ادمین و آیدی گروه
+# (توکن بات، ID گروه، و ID ادمین)خواندن متغیرهای محیطی 
+API_TOKEN = os.environ.get('API_TOKEN')
+bot = telebot.TeleBot(API_TOKEN)
+
 GROUP_CHAT_ID = os.environ.get('GROUP_CHAT_ID')
 ADMIN_ID = os.environ.get('ADMIN_ID')
 
+
+# لیست گزینه‌های رأی‌گیری
 list_bottun = ['django', 'python', 'ccna', 'net+']
 
 
+# دستور/start:برای ارسال پیام خوش‌آمدگویی به کاربر
 @bot.message_handler(commands=['start'])
 def start_bot(message):
     bot.reply_to(message, 'Welcome to the chat!')
 
 
+# دستور /new_option: شروع رأی‌گیری
 @bot.message_handler(commands=['new_option'])
 def new_bot(message):
     collection.delete_many({})
